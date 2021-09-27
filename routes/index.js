@@ -1,5 +1,6 @@
 const express = require("express");
 const yup = require("yup");
+require("yup-password")(yup);
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const saltRounds = 14;
@@ -12,7 +13,7 @@ let userSchema = yup.object().shape({
   name: yup.string().required(),
   username: yup.string().required(),
   email: yup.string().email().required(),
-  password: yup.string().required().min(8).max(20),
+  password: yup.string().required().password().min(8).max(20),
   createdOn: yup.date().default(function () {
     return new Date();
   }),
@@ -26,7 +27,7 @@ router.post("/signup", async (req, res) => {
   try {
     const isValidated = userSchema.validateSync(req.body);
     const passwordHash = bcrypt.hashSync(req.body.password, saltRounds);
-    const newuser = new User({ ...req.body, password: passwordHash });
+    const newuser = new User({ ...isValidated, password: passwordHash });
     const result = await newuser.save();
     res.status = 200;
     res.json({ message: "User sign up successful" });

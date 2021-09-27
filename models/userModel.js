@@ -21,7 +21,9 @@ const UserSchema = new Schema({
     type: String,
     required: true,
   },
-  createdOn: Date,
+  createdOn: {
+    type: Date,
+  },
 });
 
 const User = mongoose.model("User", UserSchema);
