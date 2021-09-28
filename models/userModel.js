@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const Schema = mongoose.Schema;
+const { Schema, Types } = mongoose;
 
 const UserSchema = new Schema({
   name: {
@@ -24,6 +24,7 @@ const UserSchema = new Schema({
   createdOn: {
     type: Date,
   },
+  followingUsers: [Types.ObjectId],
 });
 
 const User = mongoose.model("User", UserSchema);

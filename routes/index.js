@@ -3,6 +3,7 @@ const yup = require("yup");
 require("yup-password")(yup);
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const Tweet = require("../models/tweetModel");
 const saltRounds = 14;
 
 const User = require("../models/userModel");
@@ -18,9 +19,14 @@ let userSchema = yup.object().shape({
     return new Date();
   }),
 });
-/* GET home page. */
-router.get("/", function (req, res, next) {
-  res.render("index", { title: "Express" });
+/* GET all tweets. */
+router.get("/", async function (req, res, next) {
+  try {
+    const allTweets = await Tweet.find();
+    res.json(JSON.parse(JSON.stringify(allTweets)));
+  } catch (err) {
+    res.json({ error: err.message });
+  }
 });
 
 router.post("/signup", async (req, res) => {
@@ -60,7 +66,7 @@ router.post("/login", async (req, res) => {
     } else {
       const pwdVerified = await bcrypt.compare(password, user.password);
       if (!pwdVerified) {
-        res.json({ message: "Please enter correct password" });
+        res.json({ message: "Wrong password" });
       } else {
         const token = await jwt.sign(
           { username: user.username },
